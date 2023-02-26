@@ -11,6 +11,8 @@ public class UserEntity {
 
     protected String userPhone;
 
+    public static final String dbTable = "users";
+
     public UserEntity(Long userId, String userName, String userEmail, String userPassword, String userPhone) {
         this.userId = userId;
         this.userName = userName;

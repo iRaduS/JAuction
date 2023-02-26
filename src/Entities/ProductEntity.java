@@ -11,6 +11,8 @@ public class ProductEntity {
 
     private SellerEntity productSeller;
 
+    public static final String dbTable = "products";
+
     public ProductEntity(Long productId, String productName, String productDescription, Double productStartingPrice, SellerEntity productSeller) {
         this.productId = productId;
         this.productName = productName;

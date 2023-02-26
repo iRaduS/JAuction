@@ -17,6 +17,7 @@ public class AuctionEntity {
 
     protected String auctionLocation;
 
+    public static final String dbTable = "auctions";
 
     public AuctionEntity(Long auctionId, List<ProductEntity> auctionProducts, ZonedDateTime auctionStartingTime, String auctionName,
                          String auctionDescription, String auctionLocation) {

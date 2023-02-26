@@ -5,6 +5,7 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
+        // let's suppose that we pass by parameters by arguments the user and email check for some hashing
         var databaseInstance = DatabaseBootstraper.getInstance("jdbc:mysql://localhost:3306/auctions", "root", "");
         var auditInstance = AuditBootstraper.getInstance("data/system_audit.csv");
 

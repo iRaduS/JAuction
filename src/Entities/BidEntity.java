@@ -11,6 +11,8 @@ public class BidEntity {
 
     private Double bidSum;
 
+    public static final String dbTable = "bids";
+
     public BidEntity(Long bidId, AuctionEntity bidAuction, BidderEntity bidBidder,
                      ProductEntity bidProduct, Double bidSum) {
         this.bidId = bidId;
