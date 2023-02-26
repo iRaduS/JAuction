@@ -3,7 +3,7 @@ package Services;
 import java.util.List;
 import java.util.Map;
 
-public class CrudService<Entity> implements CrudServiceInterface<Entity> {
+public abstract class CrudService<Entity> implements CrudServiceInterface<Entity> {
     @Override
     public void create(Map<String, ?> dataToFill) {
 
