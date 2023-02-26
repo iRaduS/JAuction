@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class CrudService<Entity> implements CrudServiceInterface<Entity> {
+    protected String dbTable;
+
     @Override
     public void create(Map<String, ?> dataToFill) {
 
