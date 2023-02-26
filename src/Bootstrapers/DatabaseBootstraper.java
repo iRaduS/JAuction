@@ -23,7 +23,7 @@ public final class DatabaseBootstraper { // can't extend other classes
         connectionInstance = getConnection();
     }
 
-    public static Connection getConnection() throws SQLException {
+    private static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(dbUrlConnectionString, dbUserConnectionString, dbPasswordConnectionString);
     }
 
