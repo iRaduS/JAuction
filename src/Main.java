@@ -2,6 +2,7 @@ import Bootstrapers.AuditBootstrapper;
 import Bootstrapers.DatabaseBootstrapper;
 import Entities.AuctionEntity;
 import Entities.BidderEntity;
+import Entities.ProductEntity;
 import Entities.SellerEntity;
 import Entities.UserEntity;
 import Services.AuctionService;
@@ -101,6 +102,27 @@ public class Main {
 
                 switch ((int) currentOption) {
                 case 1 -> {
+                    ProductEntity productEntity = new ProductEntity();
+                    productEntity.setProductSeller((SellerEntity) authenticatedUser);
+
+                    System.out.println("Please insert the name of the product: ");
+                    currentScanner = scanner.nextLine();
+                    productEntity.setProductName(currentScanner);
+
+                    System.out.println("Please insert the description of the product: ");
+                    currentScanner = scanner.nextLine();
+                    productEntity.setProductDescription(currentScanner);
+
+                    System.out.println("Please insert the starting price of the product: ");
+                    Double price = scanner.nextDouble();
+                    productEntity.setProductStartingPrice(price);
+
+                    productService.create(Map.of(
+                        "name", productEntity.getProductName(),
+                        "description", productEntity.getProductDescription(),
+                        "startingPrice", productEntity.getProductStartingPrice(),
+                        "userId", productEntity.getProductSeller().getUserId()
+                    ));
                 }
                 case 2 -> {
                 }

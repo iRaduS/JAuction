@@ -24,4 +24,8 @@ public class UserEntity {
     public String getUserName() {
         return userName;
     }
+
+    public Long getUserId() {
+        return userId;
+    }
 }

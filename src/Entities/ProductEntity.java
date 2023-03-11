@@ -18,6 +18,15 @@ public class ProductEntity {
         this.productName = productName;
         this.productDescription = productDescription;
         this.productSeller = productSeller;
+        this.productStartingPrice = productStartingPrice;
+    }
+
+    public ProductEntity() {
+        this.productId = 0L;
+        this.productName = null;
+        this.productDescription = null;
+        this.productSeller = null;
+        this.productStartingPrice = 0D;
     }
 
     public Long getProductId() {
@@ -36,9 +45,23 @@ public class ProductEntity {
         return productSeller;
     }
 
-    /*
-    public void setProductName(String newProductName) {
-        productName = newProductName;
+    public Double getProductStartingPrice() {
+        return productStartingPrice;
     }
-    */
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
+    }
+
+    public void setProductStartingPrice(Double productStartingPrice) {
+        this.productStartingPrice = productStartingPrice;
+    }
+
+    public void setProductSeller(SellerEntity productSeller) {
+        this.productSeller = productSeller;
+    }
 }

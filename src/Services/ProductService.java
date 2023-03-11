@@ -1,5 +1,7 @@
 package Services;
 
+import java.util.Map;
+
 import Bootstrapers.DatabaseBootstrapper;
 import Entities.ProductEntity;
 
@@ -19,5 +21,9 @@ public class ProductService extends CrudService<ProductEntity> {
         }
 
         return productServiceInstance;
+    }
+
+    public void create(Map<String, ?> dataToFill) {
+        super.create(this.databaseInstance.getConnectionInstance(), dataToFill);
     }
 }
