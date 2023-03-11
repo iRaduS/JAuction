@@ -5,24 +5,24 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public final class AuditBootstraper {
+public final class AuditBootstrapper {
     private static FileWriter auditCSVToOutput;
 
-    private static AuditBootstraper auditInstance;
+    private static AuditBootstrapper auditInstance;
 
     private final static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
-    private AuditBootstraper(String completeFilePath) {
+    private AuditBootstrapper(String completeFilePath) {
         try {
-            this.auditCSVToOutput = new FileWriter(completeFilePath);
+            auditCSVToOutput = new FileWriter(completeFilePath);
         } catch (IOException exception) {
-            System.out.println(exception);
+            System.out.println(exception.getMessage());
         }
     }
 
-    public static AuditBootstraper getInstance(String completeFilePath) {
+    public static AuditBootstrapper getInstance(String completeFilePath) {
         if (auditInstance == null) {
-            auditInstance = new AuditBootstraper(completeFilePath);
+            auditInstance = new AuditBootstrapper(completeFilePath);
         }
 
         return auditInstance;

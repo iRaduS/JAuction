@@ -17,7 +17,6 @@ public class ProductEntity {
         this.productId = productId;
         this.productName = productName;
         this.productDescription = productDescription;
-        this.productStartingPrice = productStartingPrice;
         this.productSeller = productSeller;
     }
 
@@ -31,10 +30,6 @@ public class ProductEntity {
 
     public String getProductDescription() {
         return productDescription;
-    }
-
-    public Double getProductStartingPrice() {
-        return productStartingPrice;
     }
 
     public SellerEntity getProductSeller() {

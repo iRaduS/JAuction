@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public final class DatabaseBootstraper { // can't extend other classes
-    private static DatabaseBootstraper databaseInstance; // instance of the singleton
+public final class DatabaseBootstrapper { // can't extend other classes
+    private static DatabaseBootstrapper databaseInstance; // instance of the singleton
 
     private static String dbUrlConnectionString;
 
@@ -15,7 +15,7 @@ public final class DatabaseBootstraper { // can't extend other classes
 
     private static Connection connectionInstance;
 
-    private DatabaseBootstraper(String dbUrl, String dbUser, String dbPassword) throws SQLException {
+    private DatabaseBootstrapper(String dbUrl, String dbUser, String dbPassword) throws SQLException {
         dbUrlConnectionString = dbUrl;
         dbUserConnectionString = dbUser;
         dbPasswordConnectionString = dbPassword;
@@ -27,18 +27,18 @@ public final class DatabaseBootstraper { // can't extend other classes
         return DriverManager.getConnection(dbUrlConnectionString, dbUserConnectionString, dbPasswordConnectionString);
     }
 
-    public static DatabaseBootstraper getInstance(String dbUrl, String dbUser, String dbPassword) {
+    public static DatabaseBootstrapper getInstance(String dbUrl, String dbUser, String dbPassword) {
         if (databaseInstance != null) {
             return databaseInstance;
         }
 
         try {
-            databaseInstance = new DatabaseBootstraper(dbUrl, dbUser, dbPassword);
+            databaseInstance = new DatabaseBootstrapper(dbUrl, dbUser, dbPassword);
 
-            System.out.println("[Database Bootstraper]: Connection established with success!");
+            System.out.println("[Database Bootstrapper]: Connection established with success!");
             return databaseInstance;
         } catch (SQLException exception) {
-            System.out.println(exception);
+            System.out.println(exception.getMessage());
 
             return null;
         }
