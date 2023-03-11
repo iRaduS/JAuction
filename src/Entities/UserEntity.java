@@ -20,4 +20,8 @@ public class UserEntity {
         this.userPassword = userPassword;
         this.userPhone = userPhone;
     }
+
+    public String getUserName() {
+        return userName;
+    }
 }

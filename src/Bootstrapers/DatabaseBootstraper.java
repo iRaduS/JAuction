@@ -43,4 +43,8 @@ public final class DatabaseBootstraper { // can't extend other classes
             return null;
         }
     }
+
+    public Connection getConnectionInstance() {
+        return connectionInstance;
+    }
 }
