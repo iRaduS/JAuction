@@ -11,7 +11,7 @@ public interface CrudServiceInterface<Entity> {
 
     public List<Entity> getAll();
 
-    public void update(Long id, Map<String, ?> dataToFill);
+    public void update(Connection connection, Long id, Map<String, ?> dataToFill);
 
     public void delete(Connection connection, Long id);
 }

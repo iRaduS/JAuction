@@ -13,6 +13,17 @@ public class ProductEntity {
 
     public static final String dbTable = "products";
 
+    @Override
+    public String toString() {
+        return "ProductEntity{" +
+                "productId=" + productId +
+                ", productName='" + productName + '\'' +
+                ", productDescription='" + productDescription + '\'' +
+                ", productStartingPrice=" + productStartingPrice +
+                ", productSeller=" + productSeller +
+                '}';
+    }
+
     public ProductEntity(Long productId, String productName, String productDescription, Double productStartingPrice, SellerEntity productSeller) {
         this.productId = productId;
         this.productName = productName;

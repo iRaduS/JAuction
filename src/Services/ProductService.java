@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import Bootstrappers.DatabaseBootstrapper;
 import Entities.ProductEntity;
@@ -49,6 +50,26 @@ public class ProductService extends CrudService<ProductEntity> {
         }
     }
 
+    public ProductEntity readProductDetails(Scanner scanner, UserEntity authenticatedUser) {
+        String optionScanner = null;
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setProductSeller((SellerEntity) authenticatedUser);
+
+        System.out.println("Please insert the name of the product: ");
+        optionScanner = scanner.nextLine();
+        productEntity.setProductName(optionScanner);
+
+        System.out.println("Please insert the description of the product: ");
+        optionScanner = scanner.nextLine();
+        productEntity.setProductDescription(optionScanner);
+
+        System.out.println("Please insert the starting price of the product: ");
+        Double price = scanner.nextDouble();
+        productEntity.setProductStartingPrice(price);
+
+        return productEntity;
+    }
+
     public List<ProductEntity> getProductsFromSeller(UserEntity userEntity) throws Exception {
         Connection connection = this.databaseInstance.getConnectionInstance();
         List<ProductEntity> productsResult = new ArrayList<>();
@@ -77,5 +98,9 @@ public class ProductService extends CrudService<ProductEntity> {
 
     public void delete(Long id) {
         super.delete(this.databaseInstance.getConnectionInstance(), id);
+    }
+
+    public void update(Long id, Map<String, ?> dataToFill) {
+        super.update(this.databaseInstance.getConnectionInstance(), id, dataToFill);
     }
 }

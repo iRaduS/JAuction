@@ -107,20 +107,7 @@ public class Main {
 
                 switch ((int) currentOption) {
                 case 1 -> {
-                    ProductEntity productEntity = new ProductEntity();
-                    productEntity.setProductSeller((SellerEntity) authenticatedUser);
-
-                    System.out.println("Please insert the name of the product: ");
-                    optionScanner = scanner.nextLine();
-                    productEntity.setProductName(optionScanner);
-
-                    System.out.println("Please insert the description of the product: ");
-                    optionScanner = scanner.nextLine();
-                    productEntity.setProductDescription(optionScanner);
-
-                    System.out.println("Please insert the starting price of the product: ");
-                    Double price = scanner.nextDouble();
-                    productEntity.setProductStartingPrice(price);
+                    ProductEntity productEntity = productService.readProductDetails(scanner, authenticatedUser);
 
                     Long productId = productService.create(Map.of(
                         "name", productEntity.getProductName(),
@@ -128,15 +115,7 @@ public class Main {
                         "startingPrice", productEntity.getProductStartingPrice(),
                         "user_id", productEntity.getProductSeller().getUserId()
                     ));
-                    List<AuctionEntity> availableAuctions = auctionService.getAvailableAuctions(ZonedDateTime.now());
-
-                    System.out.println("Please select the ID of the auction: ");
-                    availableAuctions.forEach(availableAuction -> {
-                        System.out.println(availableAuction.toString());
-                    });
-
-                    Long auctionId = scanner.nextLong();
-                    productService.attachAuction(productId, auctionId);
+                    availableAuctions(productService, auctionService, scanner, productId);
                 }
                 case 2 -> {
                     List<ProductEntity> productsOnCurrentSeller = productService.getProductsFromSeller(authenticatedUser);
@@ -161,7 +140,23 @@ public class Main {
                     System.out.println("The selected ID of the product was deleted with success!");
                 }
                 case 4 -> {
+                    List<ProductEntity> productsOnCurrentSeller = productService.getProductsFromSeller(authenticatedUser);
+                    System.out.println("Available products on the current account:");
+                    for (ProductEntity productOnCurrentSeller : productsOnCurrentSeller) {
+                        System.out.println(productOnCurrentSeller.toString());
+                    }
+                    System.out.println("Please select an ID to update the product");
+                    Long idToUpdate = scanner.nextLong();
+                    scanner.nextLine();
 
+                    ProductEntity productEntity = productService.readProductDetails(scanner, authenticatedUser);
+                    productService.update(idToUpdate, Map.of(
+                            "name", productEntity.getProductName(),
+                            "description", productEntity.getProductDescription(),
+                            "startingPrice", productEntity.getProductStartingPrice(),
+                            "user_id", productEntity.getProductSeller().getUserId()
+                    ));
+                    availableAuctions(productService, auctionService, scanner, idToUpdate);
                 }
                 }
             } catch (NumberFormatException exception) {
@@ -173,6 +168,18 @@ public class Main {
                 System.out.println(exception.getMessage());
             }
         }
+    }
+
+    private static void availableAuctions(ProductService productService, AuctionService auctionService, Scanner scanner, Long idToUpdate) throws Exception {
+        List<AuctionEntity> availableAuctions = auctionService.getAvailableAuctions(ZonedDateTime.now());
+
+        System.out.println("Please select the ID of the auction: ");
+        availableAuctions.forEach(availableAuction -> {
+            System.out.println(availableAuction.toString());
+        });
+
+        Long auctionId = scanner.nextLong();
+        productService.attachAuction(idToUpdate, auctionId);
     }
 }
 
