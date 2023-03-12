@@ -1,4 +1,4 @@
-package Bootstrapers;
+package Bootstrappers;
 
 import java.io.FileWriter;
 import java.io.IOException;

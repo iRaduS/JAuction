@@ -1,9 +1,16 @@
 package Services;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import Bootstrapers.DatabaseBootstrapper;
+import Bootstrappers.DatabaseBootstrapper;
 import Entities.ProductEntity;
+import Entities.SellerEntity;
+import Entities.UserEntity;
 
 public class ProductService extends CrudService<ProductEntity> {
     private static ProductService productServiceInstance;
@@ -23,7 +30,52 @@ public class ProductService extends CrudService<ProductEntity> {
         return productServiceInstance;
     }
 
-    public void create(Map<String, ?> dataToFill) {
-        super.create(this.databaseInstance.getConnectionInstance(), dataToFill);
+    public Long create(Map<String, ?> dataToFill) {
+        return super.create(this.databaseInstance.getConnectionInstance(), dataToFill);
+    }
+
+    public void attachAuction(Long productId, Long auctionId) throws Exception {
+        Connection connection = this.databaseInstance.getConnectionInstance();
+
+        String query = "INSERT INTO auctions_products (auction_id, product_id) VALUES (?, ?)";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        preparedStatement.setLong(1, auctionId);
+        preparedStatement.setLong(2, productId);
+
+        int successful = preparedStatement.executeUpdate();
+        if (successful <= 0) {
+            throw new Exception("can't insert product in auction");
+        }
+    }
+
+    public List<ProductEntity> getProductsFromSeller(UserEntity userEntity) throws Exception {
+        Connection connection = this.databaseInstance.getConnectionInstance();
+        List<ProductEntity> productsResult = new ArrayList<>();
+
+        String query = "SELECT * FROM " + this.dbTable + " WHERE user_id = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        preparedStatement.setLong(1, userEntity.getUserId());
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            Long id = resultSet.getLong("id");
+            String name = resultSet.getString("name");
+            String description = resultSet.getString("description");
+            Double startingPrice = resultSet.getDouble("startingPrice");
+
+            productsResult.add(
+                new ProductEntity(id, name, description, startingPrice, (SellerEntity) userEntity)
+            );
+        }
+
+        resultSet.close();
+        preparedStatement.close();
+        return productsResult;
+    }
+
+    public void delete(Long id) {
+        super.delete(this.databaseInstance.getConnectionInstance(), id);
     }
 }

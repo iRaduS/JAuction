@@ -1,6 +1,6 @@
 package Services;
 
-import Bootstrapers.DatabaseBootstrapper;
+import Bootstrappers.DatabaseBootstrapper;
 import Entities.BidderEntity;
 import Entities.SellerEntity;
 import Entities.UserEntity;

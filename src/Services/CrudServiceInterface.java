@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface CrudServiceInterface<Entity> {
-    public void create(Connection connection, Map<String, ?> dataToFill);
+    public Long create(Connection connection, Map<String, ?> dataToFill);
 
     public Entity read(Long id);
 
@@ -13,5 +13,5 @@ public interface CrudServiceInterface<Entity> {
 
     public void update(Long id, Map<String, ?> dataToFill);
 
-    public void delete(Long id);
+    public void delete(Connection connection, Long id);
 }

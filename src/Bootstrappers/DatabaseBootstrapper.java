@@ -1,4 +1,4 @@
-package Bootstrapers;
+package Bootstrappers;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

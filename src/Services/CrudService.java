@@ -3,6 +3,8 @@ package Services;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +14,7 @@ public abstract class CrudService<Entity> implements CrudServiceInterface<Entity
     protected String dbTable;
 
     @Override
-    public void create(Connection connection, Map<String, ?> dataToFill) {
+    public Long create(Connection connection, Map<String, ?> dataToFill) {
         String query = "INSERT INTO " + this.dbTable + " (" +
                 dataToFill.keySet().stream().map(Object::toString)
                         .collect(Collectors.joining(","))
@@ -22,8 +24,9 @@ public abstract class CrudService<Entity> implements CrudServiceInterface<Entity
                 }).collect(Collectors.joining(","))
                 + ")";
 
+        Long idCreated = null;
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
             for (int i = 0; i < dataToFill.values().size(); i++) {
                 if (dataToFill.values().toArray()[i] instanceof String) {
@@ -48,9 +51,16 @@ public abstract class CrudService<Entity> implements CrudServiceInterface<Entity
             if (successful <= 0) {
                 throw new Exception("can't create new entry in database");
             }
+
+            ResultSet rs = preparedStatement.getGeneratedKeys();
+            if (rs.next()) {
+                idCreated = rs.getLong(1);
+            }
         } catch (Exception exception) {
             System.out.printf("[SQL]: An error was produced, %s\n", exception.getMessage());
         }
+
+        return idCreated;
     }
 
     @Override
@@ -69,7 +79,16 @@ public abstract class CrudService<Entity> implements CrudServiceInterface<Entity
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Connection connection, Long id) {
+        String query = "DELETE FROM " + this.dbTable + " WHERE id = ?";
 
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setLong(1, id);
+
+            preparedStatement.executeUpdate();
+        } catch (Exception exception) {
+            System.out.println(exception.toString());
+        }
     }
 }

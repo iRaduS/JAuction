@@ -1,5 +1,5 @@
-import Bootstrapers.AuditBootstrapper;
-import Bootstrapers.DatabaseBootstrapper;
+import Bootstrappers.AuditBootstrapper;
+import Bootstrappers.DatabaseBootstrapper;
 import Entities.AuctionEntity;
 import Entities.BidderEntity;
 import Entities.ProductEntity;
@@ -10,6 +10,7 @@ import Services.ProductService;
 import Services.UserService;
 
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -50,6 +51,10 @@ public class Main {
         UserEntity authenticatedUser = null;
         try {
             authenticatedUser = userService.loginUser(args[0], args[1]);
+            if (authenticatedUser == null) {
+                throw new Exception("[ERROR]: Can't login.");
+            }
+
             auditInstance.addNewAuditLog(authenticatedUser.getUserName() + " s-a autentificat cu succes!");
 
             String accountType = authenticatedUser instanceof BidderEntity ? "bidder" : "seller";
@@ -92,7 +97,7 @@ public class Main {
 
         // 4 functionalitati daca utilizatorul e de tip seller sa poata adauga detalii despre obiecte
         Scanner scanner = new Scanner(System.in);
-        String currentScanner = null; long currentOption;
+        String currentScanner = null, optionScanner = null; long currentOption;
 
         while (currentScanner == null || !currentScanner.equalsIgnoreCase("stop")) {
             showMenu(authenticatedUser); currentScanner = scanner.nextLine();
@@ -106,29 +111,57 @@ public class Main {
                     productEntity.setProductSeller((SellerEntity) authenticatedUser);
 
                     System.out.println("Please insert the name of the product: ");
-                    currentScanner = scanner.nextLine();
-                    productEntity.setProductName(currentScanner);
+                    optionScanner = scanner.nextLine();
+                    productEntity.setProductName(optionScanner);
 
                     System.out.println("Please insert the description of the product: ");
-                    currentScanner = scanner.nextLine();
-                    productEntity.setProductDescription(currentScanner);
+                    optionScanner = scanner.nextLine();
+                    productEntity.setProductDescription(optionScanner);
 
                     System.out.println("Please insert the starting price of the product: ");
                     Double price = scanner.nextDouble();
                     productEntity.setProductStartingPrice(price);
 
-                    productService.create(Map.of(
+                    Long productId = productService.create(Map.of(
                         "name", productEntity.getProductName(),
                         "description", productEntity.getProductDescription(),
                         "startingPrice", productEntity.getProductStartingPrice(),
-                        "userId", productEntity.getProductSeller().getUserId()
+                        "user_id", productEntity.getProductSeller().getUserId()
                     ));
+                    List<AuctionEntity> availableAuctions = auctionService.getAvailableAuctions(ZonedDateTime.now());
+
+                    System.out.println("Please select the ID of the auction: ");
+                    availableAuctions.forEach(availableAuction -> {
+                        System.out.println(availableAuction.toString());
+                    });
+
+                    Long auctionId = scanner.nextLong();
+                    productService.attachAuction(productId, auctionId);
                 }
                 case 2 -> {
+                    List<ProductEntity> productsOnCurrentSeller = productService.getProductsFromSeller(authenticatedUser);
+                    System.out.println("Sure here is a list with all the products: ");
+
+                    productsOnCurrentSeller.sort(new ProductComparator());
+                    for (ProductEntity productOnCurrentSeller: productsOnCurrentSeller) {
+                        System.out.println(productOnCurrentSeller.toString());
+                    }
                 }
                 case 3 -> {
+                    List<ProductEntity> productsOnCurrentSeller = productService.getProductsFromSeller(authenticatedUser);
+
+                    System.out.println("Available products on the current account:");
+                    for (ProductEntity productOnCurrentSeller : productsOnCurrentSeller) {
+                        System.out.println(productOnCurrentSeller.toString());
+                    }
+                    System.out.println("Please select an ID to delete the product");
+                    Long idToDelete = scanner.nextLong();
+
+                    productService.delete(idToDelete);
+                    System.out.println("The selected ID of the product was deleted with success!");
                 }
                 case 4 -> {
+
                 }
                 }
             } catch (NumberFormatException exception) {
@@ -140,14 +173,11 @@ public class Main {
                 System.out.println(exception.getMessage());
             }
         }
+    }
+}
 
-
-//        try {
-//            auditInstance.addNewAuditLog("test action");
-//        } catch (IOException exception) {
-//            System.out.println(exception);
-//        }
-//
-//        System.out.println("Hello world!");
+class ProductComparator implements Comparator<ProductEntity> {
+    public int compare(ProductEntity a, ProductEntity b) {
+        return a.getProductName().compareTo(b.getProductName());
     }
 }

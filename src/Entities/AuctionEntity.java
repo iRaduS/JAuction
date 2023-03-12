@@ -42,4 +42,17 @@ public abstract class AuctionEntity {
         this.auctionDescription = auctionDescription;
         this.auctionLocation = auctionLocation;
     }
+
+    @Override
+    public String toString() {
+        return "AuctionEntity{" +
+                "auctionId=" + auctionId +
+                ", auctionProducts=" + auctionProducts +
+                ", auctionStartingTime=" + auctionStartingTime +
+                ", auctionStoppageTime=" + auctionStoppageTime +
+                ", auctionName='" + auctionName + '\'' +
+                ", auctionDescription='" + auctionDescription + '\'' +
+                ", auctionLocation='" + auctionLocation + '\'' +
+                '}';
+    }
 }

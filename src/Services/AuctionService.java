@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import Bootstrapers.DatabaseBootstrapper;
+import Bootstrappers.DatabaseBootstrapper;
 import Entities.AuctionEntity;
 import Entities.DutchAuctionEntity;
 import Entities.EnglishAuctionEntity;
