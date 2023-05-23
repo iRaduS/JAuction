@@ -14,7 +14,7 @@ public final class AuditBootstrapper {
 
     private AuditBootstrapper(String completeFilePath) {
         try {
-            auditCSVToOutput = new FileWriter(completeFilePath);
+            auditCSVToOutput = new FileWriter(completeFilePath, true);
         } catch (IOException exception) {
             System.out.println(exception.getMessage());
         }

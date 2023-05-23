@@ -30,7 +30,7 @@ public class Main {
             return;
         }
 
-        System.out.println("1. Check all auctions and your bid history.");
+        System.out.println("1. Check all your bid history.");
         System.out.println("2. Bid for a product in an active auction.");
         System.out.println("3. Check your current winning bids.");
         System.out.println("Please choose from [1-3] or type STOP to exit: ");
@@ -97,7 +97,7 @@ public class Main {
 
         // 4 functionalitati daca utilizatorul e de tip seller sa poata adauga detalii despre obiecte
         Scanner scanner = new Scanner(System.in);
-        String currentScanner = null, optionScanner = null; long currentOption;
+        String currentScanner = null; long currentOption;
 
         while (currentScanner == null || !currentScanner.equalsIgnoreCase("stop")) {
             showMenu(authenticatedUser); currentScanner = scanner.nextLine();
@@ -163,6 +163,7 @@ public class Main {
                 if (currentScanner.equalsIgnoreCase("stop")) {
                     continue;
                 }
+                currentScanner = scanner.nextLine();
                 System.out.printf("[ERROR] Incorrect choice, exception: %s.\n", exception.getMessage());
             } catch (Exception exception) {
                 System.out.println(exception.getMessage());
