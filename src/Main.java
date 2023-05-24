@@ -131,6 +131,39 @@ public class Main {
                 }
                 case 2 -> {
                     if (authenticatedUser instanceof BidderEntity) {
+                        List<ProductEntity> availableProducts = auctionService.getAvailableAuctions(ZonedDateTime.now())
+                                .parallelStream()
+                                .map(productService::getProductsFromAuction)
+                                .parallel()
+                                .flatMap(List::stream)
+                                .toList();
+
+                        System.out.println("Please select a product id from the list: ");
+                        for (ProductEntity product : availableProducts) {
+                            System.out.println(product);
+                        }
+
+                        Long productId = scanner.nextLong();
+                        try {
+                            List<Long> filteredProductIds = availableProducts.stream().map(ProductEntity::getProductId)
+                                    .filter(id -> id == productId.longValue()).toList();
+
+                            if (filteredProductIds.isEmpty()) {
+                                throw new Exception("The id is not inside the shown products.");
+                            }
+
+                            System.out.println("Please enter a sum to bid.");
+                            Double sumToBid = scanner.nextDouble();
+
+                            bidService.create(Map.of(
+                                    "sum", sumToBid,
+                                    "product_id", productId,
+                                    "user_id", authenticatedUser.getUserId()
+                            ));
+                            System.out.println("Bid inserted with success!");
+                        } catch (Exception exception) {
+                            System.out.println(exception.getMessage());
+                        }
                         break;
                     }
 

@@ -55,4 +55,8 @@ public abstract class AuctionEntity {
                 ", auctionLocation='" + auctionLocation + '\'' +
                 '}';
     }
+
+    public Long getAuctionId() {
+        return auctionId;
+    }
 }

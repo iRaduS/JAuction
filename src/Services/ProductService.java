@@ -3,12 +3,14 @@ package Services;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
 import Bootstrappers.DatabaseBootstrapper;
+import Entities.AuctionEntity;
 import Entities.ProductEntity;
 import Entities.SellerEntity;
 import Entities.UserEntity;
@@ -18,9 +20,12 @@ public class ProductService extends CrudService<ProductEntity> {
 
     private final DatabaseBootstrapper databaseInstance;
 
+    private final UserService userService;
+
     private ProductService(DatabaseBootstrapper databaseBootstrapper) {
         this.dbTable = ProductEntity.dbTable;
         this.databaseInstance = databaseBootstrapper;
+        this.userService = UserService.getInstance(this.databaseInstance);
     }
 
     public static ProductService getInstance(DatabaseBootstrapper databaseBootstrapper) {
@@ -94,6 +99,38 @@ public class ProductService extends CrudService<ProductEntity> {
         resultSet.close();
         preparedStatement.close();
         return productsResult;
+    }
+
+    public List<ProductEntity> getProductsFromAuction(AuctionEntity auctionEntity) {
+        Connection connection = this.databaseInstance.getConnectionInstance();
+        List<ProductEntity> productsResult = new ArrayList<>();
+
+        String query = "SELECT p.* FROM " + this.dbTable + " p JOIN auctions_products ap ON ap.product_id = p.id WHERE ap.auction_id = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+            preparedStatement.setLong(1, auctionEntity.getAuctionId());
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                Long id = resultSet.getLong("id");
+                Long userId = resultSet.getLong("user_id");
+                String name = resultSet.getString("name");
+                String description = resultSet.getString("description");
+                Double startingPrice = resultSet.getDouble("startingPrice");
+
+                productsResult.add(
+                        new ProductEntity(id, name, description, startingPrice, (SellerEntity) this.userService.getUserById(userId))
+                );
+            }
+
+            resultSet.close();
+            preparedStatement.close();
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+        }
+        return productsResult;
+
     }
 
     public void delete(Long id) {

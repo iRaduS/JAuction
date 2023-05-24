@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class BidService extends CrudService<BidEntity> {
     private static BidService bidServiceInstance;
@@ -73,5 +74,9 @@ public class BidService extends CrudService<BidEntity> {
         " JOIN auctions a ON ap.auction_id = a.id" +
         " WHERE b.user_id = ? AND a.stoppageTime < NOW()";
         return getBidEntities(user, connection, availableList, query);
+    }
+
+    public void create(Map<String, ?> dataToFill) {
+        super.create(this.databaseInstance.getConnectionInstance(), dataToFill);
     }
 }
