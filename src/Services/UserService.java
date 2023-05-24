@@ -8,6 +8,7 @@ import Entities.UserEntity;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class UserService extends CrudService<UserEntity> {
     private static final String passwordSuffix = "MdJ@cT!oNJ@v";
@@ -44,6 +45,24 @@ public class UserService extends CrudService<UserEntity> {
             throw new Exception("[AUTH]: No account found with this password or email.");
         }
 
+        return this.returnCorrectType(preparedStatement, resultSet);
+    }
+
+    public UserEntity getUserById(Long id) throws Exception {
+        Connection connection = this.databaseInstance.getConnectionInstance();
+
+        String query = "SELECT * FROM " + this.dbTable + " WHERE id = ? LIMIT 1";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (!resultSet.next()) {
+            throw new Exception("No account with this ID.");
+        }
+
+        return this.returnCorrectType(preparedStatement, resultSet);
+    }
+
+    private UserEntity returnCorrectType(PreparedStatement preparedStatement, ResultSet resultSet) throws SQLException {
         if (resultSet.getLong("type") == 1) {
             return new SellerEntity(
                     resultSet.getLong("id"), resultSet.getString("name"),
@@ -51,14 +70,11 @@ public class UserService extends CrudService<UserEntity> {
                     resultSet.getString("phone")
             );
         }
-        BidderEntity bidderUser = new BidderEntity(
+
+        return new BidderEntity(
                 resultSet.getLong("id"), resultSet.getString("name"),
                 resultSet.getString("email"), resultSet.getString("password"),
                 resultSet.getString("phone")
         );
-
-        resultSet.close();
-        preparedStatement.close();
-        return bidderUser;
     }
 }

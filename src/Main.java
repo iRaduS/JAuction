@@ -1,11 +1,8 @@
 import Bootstrappers.AuditBootstrapper;
 import Bootstrappers.DatabaseBootstrapper;
-import Entities.AuctionEntity;
-import Entities.BidderEntity;
-import Entities.ProductEntity;
-import Entities.SellerEntity;
-import Entities.UserEntity;
+import Entities.*;
 import Services.AuctionService;
+import Services.BidService;
 import Services.ProductService;
 import Services.UserService;
 
@@ -32,7 +29,7 @@ public class Main {
 
         System.out.println("1. Check all your bid history.");
         System.out.println("2. Bid for a product in an active auction.");
-        System.out.println("3. Check your current winning bids.");
+        System.out.println("3. Check winning bids.");
         System.out.println("Please choose from [1-3] or type STOP to exit: ");
     }
     public static void main(String[] args) {
@@ -46,6 +43,7 @@ public class Main {
         UserService userService = UserService.getInstance(databaseInstance);
         ProductService productService = ProductService.getInstance(databaseInstance);
         AuctionService auctionService = AuctionService.getInstance(databaseInstance);
+        BidService bidService = BidService.getInstance(databaseInstance);
 
         // prima functionalitate autentificarea unui utilizator.
         UserEntity authenticatedUser = null;
@@ -61,6 +59,7 @@ public class Main {
             System.out.printf("[AUCTION]: Hello %s(TYPE: %s) you have logged in with success!\n\n", authenticatedUser.getUserName(), accountType);
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
+            return;
         }
 
         // a doua functionalitate crearea unor noi licitatii daca in baza de date sunt expirate
@@ -107,6 +106,19 @@ public class Main {
 
                 switch ((int) currentOption) {
                 case 1 -> {
+                    if (authenticatedUser instanceof BidderEntity) {
+                        try {
+                            List<BidEntity> bidEntities = bidService.getBidHistoryPerUser((BidderEntity) authenticatedUser);
+                            if (bidEntities.isEmpty()) {
+                                throw new Exception("No bid history for this account!");
+                            }
+                            bidEntities.forEach(bidEntity -> System.out.println(bidEntity.toString()));
+                        } catch(Exception exception) {
+                            System.out.println(exception.getMessage());
+                        }
+                        break;
+                    }
+
                     ProductEntity productEntity = productService.readProductDetails(scanner, authenticatedUser);
 
                     Long productId = productService.create(Map.of(
