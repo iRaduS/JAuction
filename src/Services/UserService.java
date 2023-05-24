@@ -54,6 +54,8 @@ public class UserService extends CrudService<UserEntity> {
         String query = "SELECT * FROM " + this.dbTable + " WHERE id = ? LIMIT 1";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
 
+        preparedStatement.setLong(1, id);
+
         ResultSet resultSet = preparedStatement.executeQuery();
         if (!resultSet.next()) {
             throw new Exception("No account with this ID.");

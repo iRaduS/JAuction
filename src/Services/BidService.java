@@ -35,8 +35,11 @@ public class BidService extends CrudService<BidEntity> {
         List<BidEntity> availableList = new ArrayList<>();
 
         String query = "SELECT b.id as b_id, b.sum, p.* FROM " + this.dbTable + " b JOIN products p ON b.product_id = p.id WHERE b.user_id = ?";
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        return getBidEntities(user, connection, availableList, query);
+    }
 
+    private List<BidEntity> getBidEntities(BidderEntity user, Connection connection, List<BidEntity> availableList, String query) throws Exception {
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setLong(1, user.getUserId());
 
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -56,5 +59,19 @@ public class BidService extends CrudService<BidEntity> {
         resultSet.close();
         preparedStatement.close();
         return availableList;
+    }
+
+    public List<BidEntity> getWinningBidsOnProducts(BidderEntity user) throws Exception {
+        Connection connection = this.databaseInstance.getConnectionInstance();
+        List<BidEntity> availableList = new ArrayList<>();
+
+        String query = "SELECT b.id as b_id, b.sum, p.* FROM " + this.dbTable + " b JOIN ("
+                + "SELECT product_id, MAX(sum) AS max_sum FROM bids GROUP BY product_id" +
+        ") subquery ON b.product_id = subquery.product_id AND b.sum = subquery.max_sum" +
+        " JOIN products p ON subquery.product_id = p.id" +
+        " JOIN auctions_products ap ON subquery.product_id = ap.product_id" +
+        " JOIN auctions a ON ap.auction_id = a.id" +
+        " WHERE b.user_id = ? AND a.stoppageTime < NOW()";
+        return getBidEntities(user, connection, availableList, query);
     }
 }

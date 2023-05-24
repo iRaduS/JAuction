@@ -130,6 +130,10 @@ public class Main {
                     availableAuctions(productService, auctionService, scanner, productId);
                 }
                 case 2 -> {
+                    if (authenticatedUser instanceof BidderEntity) {
+                        break;
+                    }
+
                     List<ProductEntity> productsOnCurrentSeller = productService.getProductsFromSeller(authenticatedUser);
                     System.out.println("Sure here is a list with all the products: ");
 
@@ -139,6 +143,16 @@ public class Main {
                     }
                 }
                 case 3 -> {
+                    if (authenticatedUser instanceof BidderEntity) {
+                        System.out.println("Here are your winning bids on auctions: ");
+                        List<BidEntity> bidEntities = bidService.getWinningBidsOnProducts((BidderEntity) authenticatedUser);
+                        if (bidEntities.isEmpty()) {
+                            throw new Exception("No bid history for this account!");
+                        }
+                        bidEntities.forEach(bidEntity -> System.out.println(bidEntity.toString()));
+                        break;
+                    }
+
                     List<ProductEntity> productsOnCurrentSeller = productService.getProductsFromSeller(authenticatedUser);
 
                     System.out.println("Available products on the current account:");
@@ -152,6 +166,10 @@ public class Main {
                     System.out.println("The selected ID of the product was deleted with success!");
                 }
                 case 4 -> {
+                    if (authenticatedUser instanceof BidderEntity) {
+                        break;
+                    }
+
                     List<ProductEntity> productsOnCurrentSeller = productService.getProductsFromSeller(authenticatedUser);
                     System.out.println("Available products on the current account:");
                     for (ProductEntity productOnCurrentSeller : productsOnCurrentSeller) {
